@@ -68,6 +68,11 @@
 <h1>QUICKTEL BUNDLES APP</h1>
 
 <div class="dropdown-container">
+<div style="text-align:center; margin-bottom:20px;">
+    <button id="installBtn" style="padding: 15px 30px; font-size: 1.2em; border: none; border-radius: 10px; background: purple; color: white; cursor: pointer; display: none;">
+        📲 Install Quicktel App
+    </button>
+</div>
     <label>Main Category:</label>
     <select id="mainSelect" onchange="changeMain()">
         <option value="bundles">Bundles</option>
@@ -120,6 +125,26 @@
 </footer>
 
 <script>
+let deferredPrompt;
+const installBtn = document.getElementById("installBtn");
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = 'inline-block';
+});
+
+installBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            console.log('User accepted the install');
+        }
+        deferredPrompt = null;
+        installBtn.style.display = 'none';
+    }
+});
 function changeMain() {
     var main = document.getElementById("mainSelect").value;
     document.getElementById("bundles").style.display = (main == "bundles") ? "block" : "none";
